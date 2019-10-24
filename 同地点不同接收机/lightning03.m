@@ -1,4 +1,6 @@
-clear all;close all ;clc;
+clear all;
+close all ;
+clc;
 %%选择两站文件夹
 %选择远站文件夹
 far_dirpath = uigetdir('C:\Users\P.R\Desktop\vlfdata\20170501','请选择远站文件夹');
@@ -76,4 +78,5 @@ hold on
 plot(c(1,:),'-r*');
 plot(c(2,:),'-g*');
 legend('谷值','峰值');
+disp('运行结束');
 
