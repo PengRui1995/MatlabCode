@@ -18,67 +18,73 @@ D=zeros(length(BS)-1,1);
 for index = 1:length(D)
     D(index)= fnGetDistance(BS(index+1,:),MS,'h')-fnGetDistance(BS(1,:),MS,'h');
 end
+dis_err = ones(10,11);
 %NOISE 时延精度，1代表1us。
-NOISE =0;
-R=D/c+1e-6*NOISE*(2*rand(size(D))-1);
+for  index_NOISE=1:11 %不同噪声
+    NOISE =10*(index_NOISE-1);
+    for index_time=1:10 %独立定位10次
+        R=D/c+1e-6*NOISE*(2*rand(size(D))-1);
+        %k,m 
+        dis_err1=20000;
+        dis_err2=20000;
+        dis_err3=20000;
+        %一级网格，采用1度的精度
+        Bmin1=round(MS(1)-10);
+        Bmax1 =round(MS(1)+10);
+        Lmin1=round(MS(2)-10);
+        Lmax1=round(MS(2)+10);
+        B = Bmin1:1:Bmax1;
+        L = Lmin1:1:Lmax1;
+        CostM1=zeros(length(B),length(L));
+        for i=1:length(B)
+            for j = 1:length(L)
+                Pos =[B(i),L(j)];
+                CostM1(i,j)= fnCost(BS,BSN,Pos,R,'h');
+            end
+        end
+        [row,col]=find(CostM1==min(min(CostM1)));
+        PosM1 = [B(row),L(col)];
+        dis_err1=fnGetDistance(PosM1,MS,'h');
+        %二级网格采用0.1的精度
 
-%k,m 
-dis_err1=20000;
-dis_err2=20000;
-dis_err3=20000;
-%一级网格，采用1度的精度
-Bmin1=round(MS(1)-10);
-Bmax1 =round(MS(1)+10);
-Lmin1=round(MS(2)-10);
-Lmax1=round(MS(2)+10);
-B = Bmin1:1:Bmax1;
-L = Lmin1:1:Lmax1;
-CostM1=zeros(length(B),length(L));
-for i=1:length(B)
-    for j = 1:length(L)
-        Pos =[B(i),L(j)];
-        CostM1(i,j)= fnCost(BS,BSN,Pos,R,'h');
+        if(1||dis_err1<200)
+            Bmin2=PosM1(1)-2;
+            Bmax2=PosM1(1)+2;
+            Lmin2=PosM1(2)-2;
+            Lmax2=PosM1(2)+2;
+            B = Bmin2:0.1:Bmax2;
+            L = Lmin2:0.1:Lmax2;
+            CostM2 = zeros(length(B),length(L));
+            for i=1:length(B)
+                for j = 1:length(L)
+                    Pos =[B(i),L(j)];
+                    CostM2(i,j)= fnCost(BS,BSN,Pos,R,'h');
+                end
+            end
+            [row,col]=find(CostM2==min(min(CostM2)));
+            PosM2 = [B(row),L(col)];
+            dis_err2=fnGetDistance(PosM2,MS,'h');
+        end
+        %三级网格采用0.01的精度
+        if(1||dis_err2<50)
+            Bmin3=PosM2(1)-0.1*5;
+            Bmax3=PosM2(1)+0.1*5;
+            Lmin3=PosM2(2)-0.1*5;
+            Lmax3=PosM2(2)+0.1*5;
+            B = Bmin3:0.01:Bmax3;
+            L = Lmin3:0.01:Lmax3;
+            CostM3 = zeros(length(B),length(L));
+            for i=1:length(B)
+                for j = 1:length(L)
+                    Pos =[B(i),L(j)];
+                    CostM3(i,j)= fnCost(BS,BSN,Pos,R,'h');
+                end
+            end
+            [row,col]=find(CostM3==min(min(CostM3)));
+            PosM3 = [B(row),L(col)];
+            dis_err3=fnGetDistance(PosM3,MS,'h');
+        end
+        dis_err(index_time,index_NOISE)=dis_err3;
     end
 end
-[row,col]=find(CostM1==min(min(CostM1)));
-PosM1 = [B(row),L(col)];
-dis_err1=fnGetDistance(PosM1,MS,'h');
-%二级网格采用0.1的精度
-
-if(1||dis_err1<200)
-Bmin2=PosM1(1)-1;
-Bmax2=PosM1(1)+1;
-Lmin2=PosM1(2)-1;
-Lmax2=PosM1(2)+1;
-B = Bmin2:0.1:Bmax2;
-L = Lmin2:0.1:Lmax2;
-CostM2 = zeros(length(B),length(L));
-for i=1:length(B)
-    for j = 1:length(L)
-        Pos =[B(i),L(j)];
-        CostM2(i,j)= fnCost(BS,BSN,Pos,R,'h');
-    end
-end
-[row,col]=find(CostM2==min(min(CostM2)));
-PosM2 = [B(row),L(col)];
-dis_err2=fnGetDistance(PosM2,MS,'h');
-end
-%三级网格采用0.01的精度
-if(1||dis_err2<20)
-Bmin3=PosM2(1)-0.1;
-Bmax3=PosM2(1)+0.1;
-Lmin3=PosM2(2)-0.1;
-Lmax3=PosM2(2)+0.1;
-B = Bmin3:0.01:Bmax3;
-L = Lmin3:0.01:Lmax3;
-CostM3 = zeros(length(B),length(L));
-for i=1:length(B)
-    for j = 1:length(L)
-        Pos =[B(i),L(j)];
-        CostM3(i,j)= fnCost(BS,BSN,Pos,R,'h');
-    end
-end
-[row,col]=find(CostM3==min(min(CostM2)));
-PosM3 = [B(row),L(col)];
-dis_err3=fnGetDistance(PosM3,MS,'h');
-end
+save('gridMethod03.mat');
