@@ -69,14 +69,14 @@ title('FarStaEW');
 xlabel('时间(采样点\4us)');
 ylabel('电压数值');
 subplot(2,1,2)
-plot(65535-FarStaNS,'-o');   
+plot(FarStaNS,'-o');   
 title('FarStaNS');
 xlabel('时间(采样点\4us)');
 ylabel('电压数值');
 figure
 plot(FarStaEW,'-o');
 hold on
-plot(65535-FarStaNS,'-o');
+plot(FarStaNS,'-o');
 legend('FarStaEW','FarStaNS');
 xlabel('时间(采样点\4us)');
 ylabel('电压数值');
@@ -150,7 +150,7 @@ ylabel('电压数值');
 legend('FarStaNS','NearStaNS');  
 end
 %% far前9秒，near后9秒
-if(1)
+if(0)
 figure
 subplot(2,1,1)
 FarStaEW9s=65535-FarStaEW(1:fs*9);

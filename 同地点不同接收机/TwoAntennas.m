@@ -36,7 +36,7 @@ FarStaNS=NSdata(1:fs*10);%远站NS通道10s数据
 figure 
 hold on
 plot(FarStaEW, '-o')
-plot(FarStaNS, '-o');
+plot(65535-FarStaNS, '-o');
 legend('-old','-new');
 
 %% 

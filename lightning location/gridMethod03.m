@@ -20,9 +20,9 @@ for index = 1:length(D)
 end
 dis_err = ones(10,11);
 %NOISE 时延精度，1代表1us。
-for  index_NOISE=1:11 %不同噪声
+for  index_NOISE=1:20 %不同噪声
     NOISE =10*(index_NOISE-1);
-    for index_time=1:10 %独立定位10次
+    for index_time=1:50 %独立定位10次
         R=D/c+1e-6*NOISE*(2*rand(size(D))-1);
         %k,m 
         dis_err1=20000;
@@ -87,4 +87,4 @@ for  index_NOISE=1:11 %不同噪声
         dis_err(index_time,index_NOISE)=dis_err3;
     end
 end
-save('gridMethod03.mat');
+save('gridMethod04.mat');

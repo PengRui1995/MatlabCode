@@ -56,7 +56,7 @@ end
 NearStaEW=EWdata(1:fs*10);%近站EW通道10s数据
 NearStaNS=NSdata(1:fs*10);%近站NS通道10s数据
 %% far前9秒，near后9秒
-if(1)
+if(0)
 figure
 subplot(2,1,1)
 FarStaEW9s=65535-FarStaEW(1:fs*9);
@@ -95,9 +95,20 @@ end
     %% 滤波
     FarSta=FarStaEW9s;
     NearSta = NearStaEW9s;
-    fdata=filtfilt(h,1,FarSta);
-    ndata=filtfilt(h,1,NearSta);
+    fdata=filtfilt(h,1,FarStaEW);
+    ndata=filtfilt(h,1,65535-FarStaNS);
     %% 
+    [P1,A1]=fnExtPhaseAmpSeq(fdata,fc,fs);
+    [P2,A2]=fnExtPhaseAmpSeq(ndata,fc,fs);
+    figure 
+    hold on
+    plot(A1,'-O');
+    plot(A2,'-O');
+       figure 
+    hold on
+    plot(fdata,'-O');
+    plot(ndata,'-O');
+    if(0)
     [c,lags]=xcorr(fdata(1:fs),ndata(1:fs),'coeff');
     [val,ind]=max(c);
     [val2,ind2]=min(c);
@@ -107,4 +118,5 @@ end
     delay1=lags(ind)
     dalay2 =lags(ind2)
     dalay3 =lags(ind3)
+    end
     
