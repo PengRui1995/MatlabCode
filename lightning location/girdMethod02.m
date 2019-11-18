@@ -1,4 +1,4 @@
-%% 利用多级网格
+%% 利用多级网格,,距离计算用椭球面
 clear all;
 close all;
 clc;

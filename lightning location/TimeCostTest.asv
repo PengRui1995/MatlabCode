@@ -25,5 +25,3 @@ for i=1:10000
     dis2(i)=fnGetDistance(PosA,PosB,mode2);
 end
 t2=toc;
-time1=t1/10000;
-time2=(t2-t1)/10000;
